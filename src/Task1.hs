@@ -1,4 +1,5 @@
 {-# OPTIONS_GHC -Wall #-}
+
 -- The above pragma enables all warnings
 
 module Task1 where
@@ -22,7 +23,9 @@ import Prelude hiding (filter, foldl, foldr, head, init, last, length, map, read
 -- False
 
 validate :: Integer -> Bool
-validate = error "TODO: define validate"
+validate num = tail xs == (luhn . init) xs
+  where
+    xs = toDigits num
 
 -----------------------------------
 --
@@ -34,7 +37,9 @@ validate = error "TODO: define validate"
 -- 1
 
 luhn :: [Int] -> Int
-luhn = error "TODO: define luhn"
+luhn = result . sum . map normalize . doubleEveryOther . reverse
+  where
+    result x = (10 - (x `mod` 10)) `mod` 10
 
 -----------------------------------
 --
@@ -51,7 +56,9 @@ luhn = error "TODO: define luhn"
 -- []
 
 toDigits :: Integer -> [Int]
-toDigits = error "TODO: define toDigits"
+toDigits =
+  let aux num = if num <= 0 then [] else fromIntegral (num `mod` 10) : aux (num `div` 10)
+   in reverse . aux
 
 -----------------------------------
 --
@@ -65,7 +72,8 @@ toDigits = error "TODO: define toDigits"
 -- [6,5,4,3]
 
 reverse :: [a] -> [a]
-reverse = error "TODO: define reverse"
+reverse (x : xs) = reverse xs ++ [x]
+reverse [] = []
 
 -----------------------------------
 --
@@ -77,7 +85,12 @@ reverse = error "TODO: define reverse"
 -- [12,5,8,3]
 
 doubleEveryOther :: [Int] -> [Int]
-doubleEveryOther = error "TODO: define doubleEveryOther"
+doubleEveryOther =
+  let auxOdd (x : xs) = x * 2 : auxEven xs
+      auxOdd [] = []
+      auxEven (x : xs) = x : auxOdd xs
+      auxEven [] = []
+   in auxOdd
 
 -----------------------------------
 --
@@ -94,7 +107,7 @@ doubleEveryOther = error "TODO: define doubleEveryOther"
 -- 1
 
 normalize :: Int -> Int
-normalize = error "TODO: define normalize"
+normalize x = if x >= 10 then x - 9 else x
 
 -----------------------------------
 --
@@ -107,7 +120,8 @@ normalize = error "TODO: define normalize"
 -- [2,4,6,8]
 
 map :: (a -> b) -> [a] -> [b]
-map = error "TODO: define map"
+map f (x : xs) = f x : map f xs
+map _ [] = []
 
 -----------------------------------
 --
@@ -121,4 +135,15 @@ map = error "TODO: define map"
 -- 0
 
 sum :: [Int] -> Int
-sum = error "TODO: define sum"
+sum (x : xs) = x + sum xs
+sum [] = 0
+
+tail :: [a] -> a
+tail [x] = x
+tail (_ : xs) = tail xs
+tail [] = error "tail on empty list"
+
+init :: [a] -> [a]
+init [_] = []
+init (x : xs) = x : init xs
+init [] = []
