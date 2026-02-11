@@ -73,6 +73,7 @@ digitToInt x
   | x >= '0' && x <= '9' = fromEnum x - fromEnum '0'
   | x >= 'a' && x <= 'f' = fromEnum x - fromEnum 'a' + 10
   | x >= 'A' && x <= 'F' = fromEnum x - fromEnum 'A' + 10
+  | otherwise = error "not hex"
 
 -----------------------------------
 --
