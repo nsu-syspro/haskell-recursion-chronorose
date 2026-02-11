@@ -90,9 +90,7 @@ digitToInt x
 -- False
 
 validateDec :: Integer -> Bool
-validateDec x = tail xs == (luhnDec . init) xs
-  where
-    xs = toDigits x
+validateDec = validate id luhnDec . toDigits
 
 -----------------------------------
 --
@@ -109,4 +107,15 @@ validateDec x = tail xs == (luhnDec . init) xs
 -- False
 
 validateHex :: [Char] -> Bool
-validateHex x = (digitToInt . tail) x == (luhnHex . init) x
+validateHex = validate digitToInt luhnHex
+
+-----------------------------------
+--
+-- Polymorphic(generic?) validate
+
+type LuhnFunction a = [a] -> Int
+
+type CharacterMapping a = a -> Int
+
+validate :: CharacterMapping a -> LuhnFunction a -> [a] -> Bool
+validate f luhnF x = (f . tail) x == (luhnF . init) x
